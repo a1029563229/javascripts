@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+	</head>
+	<body>
+		<img id="image1" src="q.jpg"/>
+		<!--<img id="image2" src="q.jpg"/>-->
+		<img id="image" src="q.jpg"/>
+		<button id="button">click me Hide</button>
+		<button id="button1">click me Show</button>
+	</body>
+	<script>
+		//初始化
+/*		var button = document.getElementById('button'),
+		image = document.getElementById('image');
+		console.log(button);
+		console.log(image);
+		button.onclick = function() {
+			image.style.display = 'none';
+		}*/
+		
+		//简化1.0
+/*		HTMLElement.prototype.hide = function() { //原型
+			this.style.display = 'none';
+		}*/
+		
+		/*var F = function(id) { //通过this返回dom
+			console.log(this);
+			this = document.getElementById(id);
+		};
+		
+		F.prototype.hide = function() {
+			this.style.display = 'none';
+		}*/
+		
+		//仅用于获取id
+		/*var F = function(id) {
+			return this.getElementById(id);
+		};
+		
+		F.prototype.getElementById = function (id) {
+			this.element = document.getElementById(id);
+			return this;
+		}
+		F.prototype.hide = function() {
+			this.element.style.display = 'none';
+		}
+		F.prototype.click = function(cb) {
+			this.element.addEventListener('click',function() {
+				cb();
+			})
+		}
+		var $ = function(id) {
+			return new F(id);
+		}
+		$('button').click(function() {
+			console.log(new F('image'));
+			$('image').hide();
+			$('image1').hide();
+		})*/
+		
+		//获取类名 标签名
+		/*var F = function(selector, context) {
+			return this.getNodeList(selector, context);
+		}
+		F.prototype.getNodeList = function(selector, context) {
+			context = context || document;
+			this.element = context.querySelectorAll(selector);
+			return this
+		}
+		F.prototype.each = function(fn) {
+			for (var i = 0; i < this.element.length; i++) {
+				fn.call(this.element[i], i, this.element[i]);
+			}
+			return this
+		}
+		F.prototype.hide = function() {
+			this.each(function() {
+		       this.style.display = "none";
+		    });
+		}
+		F.prototype.click = function(cb) {
+			this.each(function() {
+		       this.addEventListener('click',function() {
+					cb();
+				})
+		   });
+		}
+		var $ = function(selector, context) {
+			return new F(selector, context);
+		}
+		$('body #button').click(function() {
+			$('img').hide();
+		});*/
+		
+		//简化
+		var $ = function(selector, context) {
+		    return new $.fn.init(selector, context);
+		};
+		$.fn = $.prototype;
+		$.fn.init = function(selector, context) {
+			var nodeList = (context || document).querySelectorAll(selector);
+			this.length = nodeList.length;
+			for (var i=0;i < this.length; i++) {
+				this[i] = nodeList[i];
+			}
+			return this
+		}
+		$.fn.init.prototype = $.fn;
+		$.fn.each = function(fn) {
+			for (var i = 0; i < this.length; i++) {
+				fn.call(this[i], i, this[i]);
+			}
+			return this
+		}
+		$.fn.hide = function() {
+			this.each(function() {
+		       this.style.display = "none";
+		    });
+		}
+		$.fn.show = function() {
+			this.each(function() {
+		       this.style.display = "block";
+		    });
+		}
+		$.fn.click = function(cb) {
+			this.each(function() {
+		       this.addEventListener('click',function() {
+					cb();
+				})
+		   });
+		}
+		$('body #button').click(function() {
+			$('img').hide();
+		});
+		$('body #button1').click(function() {
+			$('img').show();
+		});
+	</script>
+</html>
